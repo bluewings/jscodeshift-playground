@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/jscodeshift-playground/static/css/main.d276ba4f.css",
-    "main.js": "/jscodeshift-playground/static/js/main.e00bbdd2.js",
+    "main.js": "/jscodeshift-playground/static/js/main.17fc1d6f.js",
     "static/js/787.909616a5.chunk.js": "/jscodeshift-playground/static/js/787.909616a5.chunk.js",
     "index.html": "/jscodeshift-playground/index.html",
     "main.d276ba4f.css.map": "/jscodeshift-playground/static/css/main.d276ba4f.css.map",
-    "main.e00bbdd2.js.map": "/jscodeshift-playground/static/js/main.e00bbdd2.js.map",
+    "main.17fc1d6f.js.map": "/jscodeshift-playground/static/js/main.17fc1d6f.js.map",
     "787.909616a5.chunk.js.map": "/jscodeshift-playground/static/js/787.909616a5.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.d276ba4f.css",
-    "static/js/main.e00bbdd2.js"
+    "static/js/main.17fc1d6f.js"
   ]
 }
