@@ -5,12 +5,6 @@ import { currentNodeAtom } from '../../store/ast';
 import { cursorPositionAtom, sourceAtom } from '../../store/source';
 import styles from './CodeEditor.module.scss';
 
-export interface CursorPosition {
-  lineNumber: number;
-  column: number;
-  offset: number;
-}
-
 interface ICodeEditorProps {}
 
 type StandaloneCodeEditor = Parameters<Required<ComponentProps<typeof Editor>>['onMount']>[0];
@@ -81,7 +75,7 @@ function CodeEditor(props: ICodeEditorProps) {
 
 export default CodeEditor;
 
-const toCursorPosition = (source: string, offset: number): Omit<CursorPosition, 'offset'> => {
+const toCursorPosition = (source: string, offset: number) => {
   let totalLength = 0;
   return source.split(/\n/).reduce(
     (accum, line) => {

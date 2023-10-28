@@ -1,5 +1,3 @@
-import CodeEditor, { type CursorPosition } from './CodeEditor';
+import CodeEditor from './CodeEditor';
 
 export default CodeEditor;
-
-export { CursorPosition };
