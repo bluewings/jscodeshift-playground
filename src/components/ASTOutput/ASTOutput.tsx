@@ -1,14 +1,16 @@
 import * as babylon from '@babel/parser';
 import j from 'jscodeshift';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
+import useHandle from '../../hooks/useHandle';
 import styles from './ASTOutput.module.scss';
 
 interface IASTOutputProps {
   code?: string;
   cursorOffset?: number;
+  onNodeSelect?: (node: any) => void;
 }
 
-function ASTOutput({ code, cursorOffset }: IASTOutputProps) {
+function ASTOutput({ code, cursorOffset, onNodeSelect }: IASTOutputProps) {
   const { ast, error } = useMemo(() => {
     try {
       const root = jsc(code ?? '');
@@ -38,6 +40,12 @@ function ASTOutput({ code, cursorOffset }: IASTOutputProps) {
     }
     return null;
   }, [ast, cursorOffset]);
+
+  const handleSelect = useHandle(onNodeSelect);
+  useEffect(() => {
+    handleSelect(selected);
+  }, [selected, handleSelect]);
+
   return (
     <div className={styles.root}>
       <table>

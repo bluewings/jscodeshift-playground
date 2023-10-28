@@ -18,14 +18,21 @@ function Main(props: IMainProps) {
   const [code, setCode] = useState<string | undefined>(defaultValue);
   const [cursorPosition, setCursorPosition] = useState<CursorPosition | undefined>();
 
+  const [selectedNode, setSelectedNode] = useState<any>();
+
   return (
     <Container className={styles.root}>
       <Grid columns="2" gap="3">
         <Flex>
-          <CodeEditor defaultValue={defaultValue} onChange={setCode} onCursorPositionChange={setCursorPosition} />
+          <CodeEditor
+            defaultValue={defaultValue}
+            onChange={setCode}
+            onCursorPositionChange={setCursorPosition}
+            selectedNode={selectedNode}
+          />
         </Flex>
         <Flex>
-          <ASTOutput code={code ?? ''} cursorOffset={cursorPosition?.offset} />
+          <ASTOutput code={code ?? ''} cursorOffset={cursorPosition?.offset} onNodeSelect={setSelectedNode} />
         </Flex>
       </Grid>
     </Container>
