@@ -7,6 +7,7 @@
     "@babel/parser": "^7.23.0",
     "@monaco-editor/react": "^4.6.0",
     "@radix-ui/themes": "^2.0.0",
+    "jotai": "^2.5.0",
     "jscodeshift": "^0.15.0",
     "prettier": "^3.0.3",
     "react": "^18.2.0",

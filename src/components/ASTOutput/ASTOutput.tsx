@@ -1,16 +1,18 @@
 import * as babylon from '@babel/parser';
+import { useAtom, useAtomValue } from 'jotai';
 import j from 'jscodeshift';
 import { useEffect, useMemo } from 'react';
-import useHandle from '../../hooks/useHandle';
+import { currentNodeAtom } from '../../store/ast';
+import { cursorOffsetAtom, sourceAtom } from '../../store/source';
 import styles from './ASTOutput.module.scss';
 
-interface IASTOutputProps {
-  code?: string;
-  cursorOffset?: number;
-  onNodeSelect?: (node: any) => void;
-}
+interface IASTOutputProps {}
 
-function ASTOutput({ code, cursorOffset, onNodeSelect }: IASTOutputProps) {
+function ASTOutput(props: IASTOutputProps) {
+  const code = useAtomValue(sourceAtom);
+  const cursorOffset = useAtomValue(cursorOffsetAtom);
+  const [selectedNode, setCurrentNode] = useAtom(currentNodeAtom);
+
   const { ast, error } = useMemo(() => {
     try {
       const root = jsc(code ?? '');
@@ -20,7 +22,8 @@ function ASTOutput({ code, cursorOffset, onNodeSelect }: IASTOutputProps) {
     }
   }, [code]);
 
-  const selected = useMemo(() => {
+  useEffect(() => {
+    let currentNode = null;
     if (ast && typeof cursorOffset === 'number') {
       const nodes: any[] = [];
       const findNode = (node: any) => {
@@ -36,15 +39,10 @@ function ASTOutput({ code, cursorOffset, onNodeSelect }: IASTOutputProps) {
         }
       };
       findNode(ast);
-      return nodes.sort((a, b) => a.range.end - a.range.start - (b.range.end - b.range.start))[0] ?? null;
+      currentNode = nodes.sort((a, b) => a.range.end - a.range.start - (b.range.end - b.range.start))[0] ?? null;
     }
-    return null;
-  }, [ast, cursorOffset]);
-
-  const handleSelect = useHandle(onNodeSelect);
-  useEffect(() => {
-    handleSelect(selected);
-  }, [selected, handleSelect]);
+    setCurrentNode(currentNode);
+  }, [ast, cursorOffset, setCurrentNode]);
 
   return (
     <div className={styles.root}>
@@ -55,7 +53,7 @@ function ASTOutput({ code, cursorOffset, onNodeSelect }: IASTOutputProps) {
               <pre>{ast ? JSON.stringify(ast, null, 2) : error}</pre>
             </td>
             <td valign="top">
-              <pre>{selected ? JSON.stringify(selected, null, 2) : error}</pre>
+              <pre>{JSON.stringify(selectedNode, null, 2)}</pre>
             </td>
           </tr>
         </tbody>

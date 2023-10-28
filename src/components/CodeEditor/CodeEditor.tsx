@@ -1,6 +1,8 @@
-import Editor, { type OnChange, OnMount } from '@monaco-editor/react';
+import Editor, { type OnMount } from '@monaco-editor/react';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { ComponentProps, useCallback, useEffect, useRef } from 'react';
-import useHandle from '../../hooks/useHandle';
+import { currentNodeAtom } from '../../store/ast';
+import { cursorPositionAtom, sourceAtom } from '../../store/source';
 import styles from './CodeEditor.module.scss';
 
 export interface CursorPosition {
@@ -9,24 +11,21 @@ export interface CursorPosition {
   offset: number;
 }
 
-interface ICodeEditorProps {
-  defaultValue?: string;
-  onChange: OnChange;
-  onCursorPositionChange?: (cursorPosition: CursorPosition | undefined) => void;
-  selectedNode?: { range: { start: number; end: number } };
-}
+interface ICodeEditorProps {}
 
 type StandaloneCodeEditor = Parameters<Required<ComponentProps<typeof Editor>>['onMount']>[0];
 type StandaloneCodeMonaco = Parameters<Required<ComponentProps<typeof Editor>>['onMount']>[1];
 
-function CodeEditor({ defaultValue, onChange, onCursorPositionChange, selectedNode }: ICodeEditorProps) {
+function CodeEditor(props: ICodeEditorProps) {
+  const [source, setSource] = useAtom(sourceAtom);
+  const setCursorPosition = useSetAtom(cursorPositionAtom);
+  const currentNode = useAtomValue(currentNodeAtom);
+
   const handleEditorWillMount = (monaco: any) => {
     // here is the monaco instance
     // do something before editor is mounted
     // monaco.languages.typescript.javascriptDefaults.setEagerModelSync(true);
   };
-
-  const handleCursorPositionChange = useHandle(onCursorPositionChange);
 
   const editorRef = useRef<StandaloneCodeEditor>();
   const monacoRef = useRef<StandaloneCodeMonaco>();
@@ -38,23 +37,23 @@ function CodeEditor({ defaultValue, onChange, onCursorPositionChange, selectedNo
         const position = editor.getPosition();
         if (position) {
           const { lineNumber, column } = position;
-          handleCursorPositionChange({ lineNumber, column, offset: toOffset(editor.getValue(), position) });
+          setCursorPosition({ lineNumber, column });
         } else {
-          handleCursorPositionChange(undefined);
+          setCursorPosition(null);
         }
       });
     },
-    [handleCursorPositionChange],
+    [setCursorPosition],
   );
 
   useEffect(() => {
     const editor = editorRef.current;
     const monaco = monacoRef.current;
     if (editor && monaco) {
-      if (selectedNode) {
+      if (currentNode) {
         const value = editor.getValue();
-        const p1 = toCursorPosition(value, selectedNode.range.start);
-        const p2 = toCursorPosition(value, selectedNode.range.end);
+        const p1 = toCursorPosition(value, currentNode.range.start);
+        const p2 = toCursorPosition(value, currentNode.range.end);
         const collection = editor.createDecorationsCollection([
           {
             range: new monaco.Range(p1.lineNumber, p1.column, p2.lineNumber, p2.column),
@@ -64,30 +63,23 @@ function CodeEditor({ defaultValue, onChange, onCursorPositionChange, selectedNo
         return () => collection.clear();
       }
     }
-  }, [selectedNode]);
+  }, [currentNode]);
 
   return (
     <div className={styles.root}>
       <Editor
         defaultLanguage="typescript"
-        defaultValue={defaultValue ?? ''}
-        onChange={onChange}
+        defaultValue={source}
         options={{ fontSize: 14, tabSize: 2 }}
         beforeMount={handleEditorWillMount}
         onMount={handleEditorDidMount}
+        onChange={(value) => setSource(value || '')}
       />
     </div>
   );
 }
 
 export default CodeEditor;
-
-const toOffset = (source: string, { lineNumber, column }: Omit<CursorPosition, 'offset'>) => {
-  return source
-    .split(/\n/)
-    .slice(0, lineNumber - 1)
-    .reduce((accum, line) => (accum += line.length + 1), column - 1);
-};
 
 const toCursorPosition = (source: string, offset: number): Omit<CursorPosition, 'offset'> => {
   let totalLength = 0;
