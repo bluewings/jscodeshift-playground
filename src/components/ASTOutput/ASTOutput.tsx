@@ -8,7 +8,7 @@ interface IASTOutputProps {
   cursorOffset?: number;
 }
 
-function ASTOutput({ code, cursorOffset = 20 }: IASTOutputProps) {
+function ASTOutput({ code, cursorOffset }: IASTOutputProps) {
   const { ast, error } = useMemo(() => {
     try {
       const root = jsc(code ?? '');

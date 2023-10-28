@@ -2,6 +2,7 @@
   "name": "jscodeshift-playground",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://bluewings.github.io/jscodeshift-playground/",
   "dependencies": {
     "@babel/parser": "^7.23.0",
     "@monaco-editor/react": "^4.6.0",
@@ -24,6 +25,7 @@
     "@types/node": "^16.18.59",
     "@types/react": "^18.2.31",
     "@types/react-dom": "^18.2.14",
+    "gh-pages": "^6.0.0",
     "react-scripts": "5.0.1",
     "sass": "^1.69.4"
   },
@@ -31,7 +33,9 @@
     "start": "craco start",
     "build": "craco build",
     "test": "craco test",
-    "eject": "react-scripts eject"
+    "eject": "craco eject",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": [
