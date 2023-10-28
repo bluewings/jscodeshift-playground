@@ -1,6 +1,6 @@
 import { Container, Flex, Grid } from '@radix-ui/themes';
 import ASTOutput from '../ASTOutput';
-import CodeEditor from '../CodeEditor';
+import SourceEditor from '../SourceEditor';
 import styles from './Main.module.scss';
 
 interface IMainProps {
@@ -12,7 +12,7 @@ function Main(props: IMainProps) {
     <Container className={styles.root}>
       <Grid columns="2" gap="3">
         <Flex>
-          <CodeEditor />
+          <SourceEditor />
         </Flex>
         <Flex>
           <ASTOutput />
